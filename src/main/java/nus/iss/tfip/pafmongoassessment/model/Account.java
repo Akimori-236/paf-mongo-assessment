@@ -4,6 +4,7 @@ import org.bson.Document;
 import lombok.Data;
 import nus.iss.tfip.pafmongoassessment.Constants;
 
+@org.springframework.data.mongodb.core.mapping.Document(collection = "accounts")
 @Data
 public class Account implements Constants {
     private String account_id;
@@ -14,7 +15,7 @@ public class Account implements Constants {
         Account acc = new Account();
         acc.setAccount_id(doc.getString(FIELD_ACCOUNT_ID));
         acc.setName(doc.getString(FIELD_NAME));
-        acc.setBalance(doc.getDouble(FIELD_BALANCE));   
+        acc.setBalance(doc.getDouble(FIELD_BALANCE));
         return acc;
     }
 }

@@ -35,7 +35,7 @@ public class FundsTransferController {
     }
 
     @PostMapping(path = { "/transfer", "/transfer/" }, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String startTransfer(@Valid Transfer transfer, BindingResult binding, Model model) {
+    public String startTransfer(@Valid Transfer transfer, BindingResult binding, Model model) throws Exception {
         List<Account> accountList = fundsSvc.getAllAccounts();
         if (binding.hasErrors()) {
             // System.err.println(binding.getAllErrors().get(0).getDefaultMessage().toString());
@@ -68,6 +68,8 @@ public class FundsTransferController {
             model.addAttribute("accountList", accountList);
             return "view0";
         }
+        // SUCCESS
+        transfer = fundsSvc.startTransfer(transfer);
         model.addAttribute("transfer", transfer);
         return "view1";
     }
