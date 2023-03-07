@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import nus.iss.tfip.pafmongoassessment.model.Account;
 import nus.iss.tfip.pafmongoassessment.repository.MongoRepository;
 
+import nus.iss.tfip.pafmongoassessment.Constants;
 @Service
-public class FundsTransferService {
+public class FundsTransferService implements Constants {
 
     @Autowired
     private MongoRepository mongoRepo;
@@ -23,4 +24,12 @@ public class FundsTransferService {
         return accList;
     }
 
+    public Boolean isAccountExist(String account_id) {
+        return mongoRepo.isAccountExist(account_id);
+    }
+
+    public Double getBalance(String account_id) {
+        Document doc = mongoRepo.getBalance(account_id);
+        return doc.getDouble(FIELD_BALANCE);
+    }
 }
