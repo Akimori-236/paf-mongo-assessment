@@ -129,13 +129,13 @@ public class MongoRepository implements Constants {
     }
 
     /*
-db.logs.insertOne({
-    transactionId: "abcd1234",
-    date: new Date(),
-    from_account: "V9L3Jd1BBI",
-    to_account: "fhRq46Y6vB",
-    amount: Double(10.00)
-})
+     * db.logs.insertOne({
+     * transactionId: "abcd1234",
+     * date: new Date(),
+     * from_account: "V9L3Jd1BBI",
+     * to_account: "fhRq46Y6vB",
+     * amount: Double(10.00)
+     * })
      */
     public Boolean logTransaction(Document doc) {
         Document response = template.insert(doc, COLLECTION_LOGS);
@@ -150,7 +150,7 @@ db.logs.insertOne({
      * from: "accounts",
      * localField: "from_account",
      * foreignField: "account_id",
-     * as: "from_name"
+     * as: "from"
      * }
      * },
      * {
@@ -158,7 +158,7 @@ db.logs.insertOne({
      * from: "accounts",
      * localField: "to_account",
      * foreignField: "account_id",
-     * as: "to_name"
+     * as: "to"
      * }
      * },
      * {
@@ -167,9 +167,9 @@ db.logs.insertOne({
      * transactionId: 1,
      * date: 1,
      * from_account: 1,
-     * from_name: { $arrayElemAt: ["$from_name.name", 0] },
+     * from_name: { $arrayElemAt: ["$from.name", 0] },
      * to_account: 1,
-     * to_name: { $arrayElemAt: ["$to_name.name", 0] },
+     * to_name: { $arrayElemAt: ["$to.name", 0] },
      * amount: 1
      * }
      * }
@@ -192,8 +192,11 @@ db.logs.insertOne({
         ProjectionOperation project = Aggregation.project()
                 .andExclude(FIELD_OBJ_ID)
                 .andInclude(FIELD_TRANSACTION_ID, FIELD_DATE, FIELD_FROM_ACCOUNT, FIELD_TO_ACCOUNT, FIELD_AMOUNT)
-                .and((ArrayOperators.arrayOf("$from.name").elementAt(0))).as("from_name")
-                .and((ArrayOperators.arrayOf("$to.name").elementAt(0))).as("to_name");
+                .and((ArrayOperators.arrayOf("$from.name").elementAt(0)))
+                .as("from_name")
+                .and((ArrayOperators.arrayOf("$to.name").elementAt(0)))
+                .as("to_name");
+        // from_name: { $arrayElemAt: ["$from.name", 0] }
 
         Aggregation pipeline = Aggregation.newAggregation(
                 lookupFrom, lookupTo, project);

@@ -1,5 +1,7 @@
 package nus.iss.tfip.pafmongoassessment.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -17,18 +19,23 @@ public class LogAuditService implements Constants {
     private MongoRepository mongoRepo;
 
     /*
-     * db.logs.insertOne({
-     * transactionId: "abcd1234",
-     * date: new Date(),
-     * from_account: "V9L3Jd1BBI",
-     * to_account: "fhRq46Y6vB",
-     * amount: Double(10.00)
-     * })
+db.logs.insertOne({
+    transactionId: "abcd1234",
+    date: new Date(),
+    from_account: "V9L3Jd1BBI",
+    to_account: "fhRq46Y6vB",
+    amount: Double(10.00)
+})
      */
     public Boolean logTransaction(Transfer transfer) {
+        // get formatted date
+        LocalDateTime ldt = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = dtf.format(ldt);
+
         Document doc = new Document();
         doc.put(FIELD_TRANSACTION_ID, transfer.getId());
-        doc.put(FIELD_DATE, new Date());
+        doc.put(FIELD_DATE, date);
         doc.put(FIELD_FROM_ACCOUNT, transfer.getFromAccount());
         doc.put(FIELD_TO_ACCOUNT, transfer.getToAccount());
         doc.put(FIELD_AMOUNT, transfer.getAmount());
