@@ -115,10 +115,11 @@ public class MongoRepository implements Constants {
         if (modifiedRows != 1) {
             throw new Exception("Error withdrawing funds");
         }
+        System.out.println("Funds Withdrawn");
     }
 
     public void depositFunds(Transfer transfer) throws Exception {
-        Criteria criteria = Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getFromAccount());
+        Criteria criteria = Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getToAccount());
         Query query = new Query(criteria);
         Update updateOps = new Update().inc(FIELD_BALANCE, transfer.getAmount());
         UpdateResult updateResult = template.updateFirst(query, updateOps, Document.class, COLLECTION_ACCOUNTS);
@@ -126,6 +127,7 @@ public class MongoRepository implements Constants {
         if (modifiedRows != 1) {
             throw new Exception("Error depositing funds");
         }
+        System.out.println("Funds Deposited");
     }
 
     public Boolean logTransaction(Document doc) {

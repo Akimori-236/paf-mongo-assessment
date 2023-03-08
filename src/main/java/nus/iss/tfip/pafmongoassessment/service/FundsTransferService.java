@@ -41,10 +41,12 @@ public class FundsTransferService implements Constants {
     public Transfer startTransfer(Transfer transfer) throws Exception {
         // generate transaction id
         String txnId = UUID.randomUUID().toString().substring(0, 8);
+
         transfer.setId(txnId);
 
         mongoRepo.withdrawFunds(transfer);
         mongoRepo.depositFunds(transfer);
+        System.out.println(txnId);
         return transfer;
     }
 }
