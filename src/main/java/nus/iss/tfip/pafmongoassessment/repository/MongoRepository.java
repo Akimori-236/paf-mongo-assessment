@@ -9,10 +9,8 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
-import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 
 import nus.iss.tfip.pafmongoassessment.Constants;
@@ -130,6 +128,15 @@ public class MongoRepository implements Constants {
         System.out.println("Funds Deposited");
     }
 
+    /*
+db.logs.insertOne({
+    transactionId: "abcd1234",
+    date: new Date(),
+    from_account: "V9L3Jd1BBI",
+    to_account: "fhRq46Y6vB",
+    amount: Double(10.00)
+})
+     */
     public Boolean logTransaction(Document doc) {
         Document response = template.insert(doc, COLLECTION_LOGS);
         // System.out.println(response);
@@ -168,6 +175,8 @@ public class MongoRepository implements Constants {
      * }
      * )
      */
+    // TO GET ALL LOGS WITH ACCOUNT NAMES INCLUDED
+    // basically get View1 in BSON form
     public List<Document> getAllLogs() {
         LookupOperation lookupFrom = Aggregation.lookup(
                 COLLECTION_ACCOUNTS,
