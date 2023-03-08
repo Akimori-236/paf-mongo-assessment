@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 
 import nus.iss.tfip.pafmongoassessment.Constants;
@@ -84,29 +85,32 @@ public class MongoRepository implements Constants {
     // }
 
     // public void depositFunds(Transfer transfer) throws Exception {
-    //     Double originalBalance = this.getBalance(transfer.getToAccount()).getDouble(FIELD_BALANCE);
+    // Double originalBalance =
+    // this.getBalance(transfer.getToAccount()).getDouble(FIELD_BALANCE);
 
-    //     Criteria criteria = Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getToAccount());
-    //     Query query = new Query(criteria);
-    //     UpdateDefinition ud = new Update()
-    //             .set(FIELD_BALANCE, (originalBalance + transfer.getAmount()));
-    //     Long modifiedRows = template.updateFirst(query, ud, COLLECTION_ACCOUNTS).getModifiedCount();
-    //     if (modifiedRows != 1) {
-    //         throw new Exception("Error withdrawing funds");
-    //     }
+    // Criteria criteria =
+    // Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getToAccount());
+    // Query query = new Query(criteria);
+    // UpdateDefinition ud = new Update()
+    // .set(FIELD_BALANCE, (originalBalance + transfer.getAmount()));
+    // Long modifiedRows = template.updateFirst(query, ud,
+    // COLLECTION_ACCOUNTS).getModifiedCount();
+    // if (modifiedRows != 1) {
+    // throw new Exception("Error withdrawing funds");
+    // }
     // }
 
     /*
-db.accounts.updateOne(
-    { account_id: "ckTV56axff" },
-    { $inc: { "balance": -12 } }
-)
+     * db.accounts.updateOne(
+     * { account_id: "ckTV56axff" },
+     * { $inc: { "balance": -12 } }
+     * )
      */
     public void withdrawFunds(Transfer transfer) throws Exception {
         Criteria criteria = Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getFromAccount());
         Query query = new Query(criteria);
         Update updateOps = new Update().inc(FIELD_BALANCE, -(transfer.getAmount()));
-        UpdateResult updateResult =  template.updateFirst(query, updateOps, Document.class, COLLECTION_ACCOUNTS);
+        UpdateResult updateResult = template.updateFirst(query, updateOps, Document.class, COLLECTION_ACCOUNTS);
         Long modifiedRows = updateResult.getModifiedCount();
         if (modifiedRows != 1) {
             throw new Exception("Error withdrawing funds");
@@ -117,11 +121,16 @@ db.accounts.updateOne(
         Criteria criteria = Criteria.where(FIELD_ACCOUNT_ID).is(transfer.getFromAccount());
         Query query = new Query(criteria);
         Update updateOps = new Update().inc(FIELD_BALANCE, transfer.getAmount());
-        UpdateResult updateResult =  template.updateFirst(query, updateOps, Document.class, COLLECTION_ACCOUNTS);
+        UpdateResult updateResult = template.updateFirst(query, updateOps, Document.class, COLLECTION_ACCOUNTS);
         Long modifiedRows = updateResult.getModifiedCount();
         if (modifiedRows != 1) {
             throw new Exception("Error depositing funds");
         }
-        ;
+    }
+
+    public Boolean logTransaction(Document doc) {
+        Document response = template.insert(doc, COLLECTION_LOGS);
+        // System.out.println(response);
+        return response.getObjectId(FIELD_OBJ_ID) != null;
     }
 }

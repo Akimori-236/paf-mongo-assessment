@@ -16,8 +16,7 @@ import jakarta.validation.Valid;
 import nus.iss.tfip.pafmongoassessment.model.Account;
 import nus.iss.tfip.pafmongoassessment.model.Transfer;
 import nus.iss.tfip.pafmongoassessment.service.FundsTransferService;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import nus.iss.tfip.pafmongoassessment.service.LogAuditService;
 
 @Controller
 @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
@@ -25,6 +24,8 @@ public class FundsTransferController {
 
     @Autowired
     private FundsTransferService fundsSvc;
+    @Autowired
+    private LogAuditService logSvc;
 
     @GetMapping(path = { "/", "index.html" })
     public String landingPage(Model model) {
@@ -72,6 +73,8 @@ public class FundsTransferController {
         }
         // SUCCESS
         transfer = fundsSvc.startTransfer(transfer);
+        Boolean isLogged = logSvc.logTransaction(transfer);
+        System.out.printf("Transaction logged in Mongo: %s", isLogged);
         model.addAttribute("transfer", transfer);
         return "view1";
     }

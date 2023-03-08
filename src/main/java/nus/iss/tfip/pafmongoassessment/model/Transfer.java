@@ -25,7 +25,7 @@ public class Transfer {
     private String fromAccountName;
     @NotEmpty(message = "To account cannot be empty")
     // C1
-    @Size(min=10, max=10)
+    @Size(min=10, max=10, message ="Account ID length must be 10")
     private String toAccount;
     private String toAccountName;
     // C3

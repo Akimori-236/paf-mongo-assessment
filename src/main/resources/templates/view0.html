@@ -35,16 +35,16 @@
                                 class="form-select"
                                 name="fromAccount"
                                 id="fromAccountID"
-                                
+                                data-th-field="${transfer.fromAccount}"
                             >
-                                <option selected></option>
+                                <option value="" selected></option>
                                 <!-- for (Account acc : accountList) {} -->
                                 <option
                                     data-th-each="acc : ${accountList}"
                                     data-th-value="${acc.account_id}"
                                     data-th-text="${acc.name} + ' (' + ${acc.account_id} + ')'"
-                                    data-th-selected="${acc.account_id == transfer.fromAccount}"
                                 ></option>
+                                <!-- data-th-selected="${acc.account_id == transfer.fromAccount}" -->
                             </select>
                         </td>
                     </tr>
@@ -55,14 +55,15 @@
                                 class="form-select"
                                 name="toAccount"
                                 id="toAccountID"
+                                data-th-field="${transfer.toAccount}"
                             >
-                                <option selected></option>
+                                <option value="" selected></option>
                                 <option
                                     data-th-each="acc : ${accountList}"
                                     data-th-value="${acc.account_id}"
                                     data-th-text="${acc.name} + ' (' + ${acc.account_id} + ')'"
-                                    data-th-selected="${acc.account_id == transfer.toAccount}"
                                 ></option>
+                                <!-- data-th-selected="${acc.account_id == transfer.toAccount}" -->
                             </select>
                         </td>
                     </tr>
