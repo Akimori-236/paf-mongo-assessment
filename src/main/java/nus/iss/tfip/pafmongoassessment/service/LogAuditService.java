@@ -1,6 +1,7 @@
 package nus.iss.tfip.pafmongoassessment.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,9 @@ public class LogAuditService implements Constants {
         doc.put(FIELD_TO_ACCOUNT, transfer.getToAccount());
         doc.put(FIELD_AMOUNT, transfer.getAmount());
         return mongoRepo.logTransaction(doc);
+    }
+
+    public List<Document> getAllLogs() {
+        return mongoRepo.getAllLogs();
     }
 }

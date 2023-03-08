@@ -135,4 +135,61 @@ public class MongoRepository implements Constants {
         // System.out.println(response);
         return response.getObjectId(FIELD_OBJ_ID) != null;
     }
+
+    /*
+     * db.logs.aggregate(
+     * {
+     * $lookup: {
+     * from: "accounts",
+     * localField: "from_account",
+     * foreignField: "account_id",
+     * as: "from_name"
+     * }
+     * },
+     * {
+     * $lookup: {
+     * from: "accounts",
+     * localField: "to_account",
+     * foreignField: "account_id",
+     * as: "to_name"
+     * }
+     * },
+     * {
+     * $project: {
+     * _id: 0,
+     * transactionId: 1,
+     * date: 1,
+     * from_account: 1,
+     * from_name: { $arrayElemAt: ["$from_name.name", 0] },
+     * to_account: 1,
+     * to_name: { $arrayElemAt: ["$to_name.name", 0] },
+     * amount: 1
+     * }
+     * }
+     * )
+     */
+    public List<Document> getAllLogs() {
+        LookupOperation lookupFrom = Aggregation.lookup(
+                COLLECTION_ACCOUNTS,
+                FIELD_FROM_ACCOUNT,
+                FIELD_ACCOUNT_ID,
+                "from");
+        LookupOperation lookupTo = Aggregation.lookup(
+                COLLECTION_ACCOUNTS,
+                FIELD_TO_ACCOUNT,
+                FIELD_ACCOUNT_ID,
+                "to");
+
+        ProjectionOperation project = Aggregation.project()
+                .andExclude(FIELD_OBJ_ID)
+                .andInclude(FIELD_TRANSACTION_ID, FIELD_DATE, FIELD_FROM_ACCOUNT, FIELD_TO_ACCOUNT, FIELD_AMOUNT)
+                .and((ArrayOperators.arrayOf("$from.name").elementAt(0))).as("from_name")
+                .and((ArrayOperators.arrayOf("$to.name").elementAt(0))).as("to_name");
+
+        Aggregation pipeline = Aggregation.newAggregation(
+                lookupFrom, lookupTo, project);
+        AggregationResults<Document> results = template.aggregate(
+                pipeline, COLLECTION_LOGS, Document.class);
+        return results.getMappedResults();
+    }
 }
